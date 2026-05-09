@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Master - Đỉnh Cao Giao Ảnh Cho Nhiếp Ảnh Gia</title>
+    <meta name="description" content="Phần mềm giao ảnh tự động chuyên nghiệp dành cho nhiếp ảnh gia. Đồng bộ Cloud, quản lý dung lượng, tối ưu chi phí và tăng tốc độ làm việc.">
+    <meta name="keywords" content="phần mềm giao ảnh, tự động hóa, nhiếp ảnh gia, đồng bộ cloud, photo master, quản lý ảnh">
+    <meta name="author" content="Hoang Tien Manh">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://photo-master-app.vercel.app/">
+    <meta property="og:title" content="Photo Master - Đỉnh Cao Giao Ảnh">
+    <meta property="og:description" content="Tự động hóa toàn bộ quy trình giao ảnh với chi phí tối ưu nhất cho Photographer.">
+    <meta property="og:image" content="https://raw.githubusercontent.com/MaxxAlan/photo-master-github-app/main/preview.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Photo Master - Đỉnh Cao Giao Ảnh">
+    <meta property="twitter:description" content="Tự động hóa toàn bộ quy trình giao ảnh với chi phí tối ưu nhất cho Photographer.">
+    <meta property="twitter:image" content="https://raw.githubusercontent.com/MaxxAlan/photo-master-github-app/main/preview.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #020617; color: #f8fafc; scroll-behavior: smooth; }
+        .gradient-text {
+            background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-glow {
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 100%; height: 600px;
+            background: radial-gradient(circle at center, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            z-index: -1;
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover { border-color: rgba(99, 102, 241, 0.4); transform: translateY(-4px); }
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+        }
+        .chart-container { position: relative; height: 300px; width: 100%; }
+        .detect-badge {
+            background: rgba(34, 197, 94, 0.1);
+            color: #4ade80;
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        /* Auto Loop Workflow Animation */
+        .step-active {
+            border-color: #6366f1 !important;
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
+            background: rgba(99, 102, 241, 0.1) !important;
+            transform: translateY(-8px) scale(1.02);
+        }
+        .step-active .step-number {
+            background: #6366f1;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+        }
+        .step-active .step-visual { width: 100% !important; }
+
+        .loading-dots:after {
+            content: '.';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+        @keyframes dots {
+            0%, 20% { color: rgba(0,0,0,0); text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); }
+            40% { color: white; text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); }
+            60% { text-shadow: .25em 0 0 white, .5em 0 0 rgba(0,0,0,0); }
+            80%, 100% { text-shadow: .25em 0 0 white, .5em 0 0 white; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="hero-glow"></div>
+
+    <!-- Header -->
+    <header class="fixed w-full z-50 glass-card border-b border-white/5">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <i class="fas fa-bolt text-white"></i>
+                </div>
+                <span class="text-xl font-bold tracking-tight">Photo Master</span>
+            </div>
+            <nav class="hidden md:flex gap-8 text-sm font-medium text-slate-400">
+                <a href="#workflow" class="hover:text-white transition">Quy trình</a>
+                <a href="#comparison" class="hover:text-white transition">So sánh</a>
+                <a href="#pricing" class="hover:text-white transition">Bảng giá</a>
+            </nav>
+            <button onclick="triggerDownload(this)" class="btn-primary text-white px-6 py-2.5 rounded-xl font-bold text-sm transition hover:scale-105 active:scale-95">
+                Tải Ngay Miễn Phí
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="pt-40 pb-20 px-6">
+        <div class="container mx-auto text-center max-w-4xl">
+            <div class="mb-6 inline-block">
+                <div id="detect-ui" class="detect-badge">
+                    <i class="fas fa-check-circle"></i>
+                    Hệ điều hành: <span id="os-name">Đang nhận diện...</span>
+                </div>
+            </div>
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-8 leading-[1.1] tracking-tight">
+                Giao Ảnh Chuyên Nghiệp <br>
+                <span class="gradient-text">Với Chi Phí Rẻ Nhất</span>
+            </h1>
+            <p class="text-lg md:text-xl text-slate-400 mb-12 leading-relaxed">
+                Bạn đã sẵn sàng sử dụng thử dịch vụ tuyệt vời này của chúng tôi? <br class="hidden md:block">
+                Tải xuống và trải nghiệm ngay quy trình tự động hóa hoàn toàn từ máy tính đến tay khách hàng.
+            </p>
+            
+            <div class="flex flex-col items-center gap-6" id="download-section">
+                <button id="smart-download-btn" onclick="triggerDownload(this)" class="btn-primary text-white px-10 py-5 rounded-2xl font-extrabold text-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-4 group">
+                    <i id="os-icon" class="fab fa-windows text-2xl"></i>
+                    <span id="btn-text-content">Tải Photo Master Cho <span id="os-btn-text">Windows</span></span>
+                </button>
+                <p id="download-hint" class="text-slate-500 text-sm italic">Click để tải ngay bản cài đặt chính thức. Không cần đăng ký thẻ.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Workflow Section (Optimized Loop) -->
+    <section id="workflow" class="py-24 relative overflow-hidden">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="text-indigo-400 text-sm font-bold tracking-widest uppercase mb-3 block">Smart Automation</span>
+                <h2 class="text-3xl md:text-5xl font-bold mb-4">Quy trình 1 chạm</h2>
+                <p class="text-slate-400">Xem cách Photo Master tự động hóa công việc cho bạn</p>
+            </div>
+
+            <div class="grid md:grid-cols-4 gap-6" id="steps-container">
+                <!-- Step 1 -->
+                <div class="glass-card p-8 rounded-3xl relative overflow-hidden step-item" id="step-0">
+                    <div class="w-12 h-12 bg-slate-800 text-slate-400 rounded-xl flex items-center justify-center font-bold mb-6 step-number transition-all">01</div>
+                    <div class="text-3xl mb-4">📂</div>
+                    <h3 class="text-xl font-bold mb-3">Khởi tạo</h3>
+                    <p class="text-slate-400 text-sm">Chọn thư mục ảnh. App tự quét và phân loại file.</p>
+                    <div class="mt-6 h-1 w-8 bg-indigo-500 rounded-full step-visual transition-all duration-500"></div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="glass-card p-8 rounded-3xl relative overflow-hidden step-item" id="step-1">
+                    <div class="w-12 h-12 bg-slate-800 text-slate-400 rounded-xl flex items-center justify-center font-bold mb-6 step-number transition-all">02</div>
+                    <div class="text-3xl mb-4">☁️</div>
+                    <h3 class="text-xl font-bold mb-3">Đồng bộ</h3>
+                    <p class="text-slate-400 text-sm">Ảnh được nén và đẩy lên Cloud siêu tốc.</p>
+                    <div class="mt-6 h-1 w-8 bg-indigo-500 rounded-full step-visual transition-all duration-500"></div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="glass-card p-8 rounded-3xl relative overflow-hidden step-item" id="step-2">
+                    <div class="w-12 h-12 bg-slate-800 text-slate-400 rounded-xl flex items-center justify-center font-bold mb-6 step-number transition-all">03</div>
+                    <div class="text-3xl mb-4">✨</div>
+                    <h3 class="text-xl font-bold mb-3">Chọn ảnh</h3>
+                    <p class="text-slate-400 text-sm">Khách hàng nhận link và chọn ảnh trên Gallery.</p>
+                    <div class="mt-6 h-1 w-8 bg-indigo-500 rounded-full step-visual transition-all duration-500"></div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="glass-card p-8 rounded-3xl relative overflow-hidden step-item" id="step-3">
+                    <div class="w-12 h-12 bg-slate-800 text-slate-400 rounded-xl flex items-center justify-center font-bold mb-6 step-number transition-all">04</div>
+                    <div class="text-3xl mb-4">🎯</div>
+                    <h3 class="text-xl font-bold mb-3">Bàn giao</h3>
+                    <p class="text-slate-400 text-sm">App tự lọc ảnh khách chọn về máy tính local.</p>
+                    <div class="mt-6 h-1 w-8 bg-indigo-500 rounded-full step-visual transition-all duration-500"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section id="comparison" class="py-24 bg-slate-950/50">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-5xl font-bold mb-4">Tại sao chúng tôi rẻ hơn?</h2>
+                <p class="text-slate-400">So sánh chi phí hàng năm cho gói 200GB Enterprise</p>
+            </div>
+            <div class="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
+                <div class="glass-card p-8 rounded-3xl">
+                    <div class="chart-container">
+                        <canvas id="costChart"></canvas>
+                    </div>
+                </div>
+                <div class="space-y-6">
+                    <h3 class="text-2xl font-bold text-indigo-400">Tiết kiệm đến 60% mỗi năm</h3>
+                    <p class="text-slate-300 leading-relaxed">
+                        Khác với Cloud truyền thống, Photo Master mang lại quy trình làm việc khép kín, tối ưu chi phí hạ tầng Enterprise để phục vụ riêng cho nhiếp ảnh.
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3"><i class="fas fa-check text-indigo-500 mt-1"></i><span><b>App Agent:</b> Tự động hóa đồng bộ Local.</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-check text-indigo-500 mt-1"></i><span><b>Web Gallery:</b> Giao diện sang trọng cho khách.</span></li>
+                        <li class="flex items-start gap-3"><i class="fas fa-check text-indigo-500 mt-1"></i><span><b>Enterprise Quota:</b> Không giới hạn băng thông.</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="py-24">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl md:text-5xl font-bold text-center mb-16">Bảng giá linh hoạt</h2>
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Basic -->
+                <div class="glass-card p-8 rounded-3xl" onmouseover="updateChart('Basic')">
+                    <h3 class="text-xl font-bold mb-2">Basic</h3>
+                    <div class="text-3xl font-extrabold mb-6">Miễn phí</div>
+                    <ul class="text-sm text-slate-400 space-y-4 mb-8">
+                        <li><i class="fas fa-check text-slate-600 mr-2"></i> Dùng dung lượng Google Drive cá nhân</li>
+                        <li><i class="fas fa-check text-slate-600 mr-2"></i> Đồng bộ cơ bản</li>
+                    </ul>
+                    <button onclick="triggerDownload(this)" class="w-full py-3 rounded-xl border border-white/10 font-bold hover:bg-white/5 transition">Dùng thử ngay</button>
+                </div>
+
+                <div class="glass-card p-8 rounded-3xl border-indigo-500/50 bg-indigo-500/5 shadow-2xl shadow-indigo-500/10" onmouseover="updateChart('Popular')">
+                    <div class="mb-4"><span class="bg-indigo-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">Phổ biến nhất</span></div>
+                    <h3 class="text-xl font-bold mb-2">Popular (200GB)</h3>
+                    <div class="text-3xl font-extrabold mb-6">79.000đ<span class="text-sm font-normal text-slate-500">/tháng</span></div>
+                    <ul class="text-sm text-slate-300 space-y-4 mb-8">
+                        <li><i class="fas fa-check text-indigo-500 mr-2"></i> <b>200GB</b> Enterprise Cloud</li>
+                        <li><i class="fas fa-check text-indigo-500 mr-2"></i> Tự động đồng bộ Realtime</li>
+                        <li><i class="fas fa-check text-indigo-500 mr-2"></i> Hỗ trợ 24/7</li>
+                    </ul>
+                    <button onclick="triggerDownload(this)" class="w-full py-3 rounded-xl btn-primary font-bold transition">Nâng cấp trong App</button>
+                </div>
+
+                <div class="glass-card p-8 rounded-3xl" onmouseover="updateChart('Studio')">
+                    <h3 class="text-xl font-bold mb-2">Studio (1TB)</h3>
+                    <div class="text-3xl font-extrabold mb-6">149.000đ<span class="text-sm font-normal text-slate-500">/tháng</span></div>
+                    <ul class="text-sm text-slate-400 space-y-4 mb-8">
+                        <li><i class="fas fa-check text-amber-500 mr-2"></i> <b>1.024GB</b> Dung lượng khủng</li>
+                        <li><i class="fas fa-check text-amber-500 mr-2"></i> Phù hợp cho Studio lớn</li>
+                    </ul>
+                    <button onclick="triggerDownload(this)" class="w-full py-3 rounded-xl border border-white/10 font-bold hover:bg-white/5 transition">Nâng cấp trong App</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-white/5 text-center">
+        <p class="text-slate-500 text-sm">&copy; 2026 Photo Master. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // --- 1. OS Detection ---
+        const downloadLinks = {
+            win: 'https://github.com/MaxxAlan/photo-master-github-app/releases/latest/download/photo-master-installer.exe',
+            mac: 'https://github.com/MaxxAlan/photo-master-github-app/releases/latest/download/Photo-Master.dmg',
+            linux: 'https://github.com/MaxxAlan/photo-master-github-app/releases/latest/download/Photo-Master.AppImage'
+        };
+
+        function getOS() {
+            const platform = window.navigator.platform.toLowerCase();
+            const userAgent = window.navigator.userAgent.toLowerCase();
+            if (userAgent.includes('mac') || platform.includes('mac')) return 'mac';
+            if (userAgent.includes('linux') || platform.includes('linux')) return 'linux';
+            return 'win';
+        }
+
+        const currentOS = getOS();
+        document.getElementById('os-name').innerText = currentOS === 'mac' ? 'macOS' : (currentOS === 'linux' ? 'Linux' : 'Windows');
+        const osBtnText = document.getElementById('os-btn-text');
+        if (osBtnText) osBtnText.innerText = currentOS === 'mac' ? 'macOS' : (currentOS === 'linux' ? 'Linux' : 'Windows');
+        const osIcon = document.getElementById('os-icon');
+        if (osIcon) osIcon.className = currentOS === 'mac' ? 'fab fa-apple' : (currentOS === 'linux' ? 'fab fa-linux' : 'fab fa-windows');
+
+        function triggerDownload(btn) {
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> <span>Đang tải<span class="loading-dots"></span></span>`;
+            btn.disabled = true;
+
+            // Direct download trigger
+            const link = document.createElement('a');
+            link.href = downloadLinks[currentOS];
+            link.download = ''; 
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Re-enable after a delay
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }, 3000);
+        }
+
+        // --- 2. Workflow Auto Loop ---
+        let currentStep = 0;
+        const totalSteps = 4;
+        function stepLoop() {
+            document.querySelectorAll('.step-item').forEach(el => el.classList.remove('step-active'));
+            const activeStep = document.getElementById(`step-${currentStep}`);
+            if (activeStep) activeStep.classList.add('step-active');
+            currentStep = (currentStep + 1) % totalSteps;
+        }
+        setInterval(stepLoop, 2500);
+        stepLoop();
+
+        // --- 3. Chart ---
+        const ctx = document.getElementById('costChart').getContext('2d');
+        let costChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Google One', 'iCloud+', 'Photo Master'],
+                datasets: [{
+                    data: [840000, 828000, 480000],
+                    backgroundColor: ['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.1)', '#6366f1'],
+                    borderRadius: 12
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, display: false }, x: { grid: { display: false }, ticks: { color: '#fff' } } }, plugins: { legend: { display: false } } }
+        });
+
+        function updateChart(plan) {
+            let data = plan === 'Studio' ? [2100000, 2050000, 990000] : (plan === 'Basic' ? [0,0,0] : [840000, 828000, 480000]);
+            costChart.data.datasets[0].data = data;
+            costChart.update();
+        }
+    </script>
+</body>
+</html>
