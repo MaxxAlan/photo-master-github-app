@@ -51,21 +51,21 @@ Hoặc bạn có thể tải trực tiếp các bộ cài từ GitHub:
 
 | Tính năng | Gói FREE | Gói PREMIUM 🌟 |
 | :--- | :--- | :--- |
-| Dung lượng | 15 GB (Cá nhân) | **5.000 GB (Enterprise)** |
-| Đồng bộ tự động | Có | Có |
-| Tốc độ Sync | Tiêu chuẩn | **Ưu tiên (Turbo)** |
-| Quản lý dự án | Không giới hạn | Không giới hạn |
-| Hỗ trợ kỹ thuật | Cộng đồng | **24/7 (Priority)** |
+| Dung lượng | Drive cá nhân | Gói đăng kí |
+| Đồng bộ tự động | Tiêu chuẩn | Không giới hạn |
+| Tốc độ Sync | Tiêu chuẩn | Không giới hạn |
+| Quản lý dự án | Tiêu chuẩn | Không giới hạn |
+| Hỗ trợ kỹ thuật | Có | Có|
 
+>* Tiêu chuẩn: tốc độ đồng bộ 3mb/s, dung lượng tối đa 50mb/file, hỗ trợ tối đa 50 dự án (Hỗ trợ sự cố).
 ---
-
 ## 🤝 Hỗ trợ & Liên hệ
 
 Nếu bạn gặp bất kỳ vấn đề gì trong quá trình cài đặt hoặc sử dụng, vui lòng liên hệ:
 
 *   **Website**: [https://photo-master-app.vercel.app](https://photo-master-app.vercel.app)
-*   **Email**: [Vui lòng gửi yêu cầu qua website]
-*   **Zalo/Hotline**: [Thông tin trong mục Support của App]
+*   **Email**: aizasybxitjpvbi@zohomail.com
+
 
 ---
 
