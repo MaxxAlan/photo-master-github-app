@@ -88,8 +88,7 @@
             80%, 100% { text-shadow: .25em 0 0 white, .5em 0 0 white; }
         }
     </style>
-    <!-- Vercel Web Analytics -->
-    <script defer src="/_vercel/insights/script.js"></script>
+    </style>
 </head>
 <body class="antialiased">
 
@@ -434,5 +433,10 @@
         // --- 4. Initialize ---
         fetchLatestRelease();
     </script>
+    <!-- Vercel Web Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
